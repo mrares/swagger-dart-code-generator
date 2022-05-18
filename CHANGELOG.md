@@ -1,3 +1,7 @@
+# 2.5.3
+
+* Fixed cases with ref basic type return type in requests
+
 # 2.5.2
 
 * Added new build option `additionalHeaders`. It allows to add some headers for ALL service requests

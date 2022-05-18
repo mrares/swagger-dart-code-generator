@@ -824,6 +824,10 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
       final allReusableObjects = _getAllReusableObjects(root);
       final neededResponse = allReusableObjects[ref.getUnformattedRef()];
 
+      if (kBasicTypes.contains(neededResponse?.type)) {
+        return kBasicTypesMap[neededResponse?.type];
+      }
+
       if (neededResponse == null) {
         return kObject.pascalCase;
       }
