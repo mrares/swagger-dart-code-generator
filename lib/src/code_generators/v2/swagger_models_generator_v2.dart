@@ -10,7 +10,7 @@ class SwaggerModelsGeneratorV2 extends SwaggerModelsGenerator {
   @override
   String generate(SwaggerRoot root, String fileName) {
     final definitions = root.definitions;
-    return generateBase(root, fileName, definitions, true);
+    return generateBase(root, fileName, definitions, true, true);
   }
 
   @override

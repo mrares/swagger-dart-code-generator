@@ -12,7 +12,7 @@ class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
     final components = root.components;
     final schemas = components?.schemas;
 
-    return generateBase(root, fileName, schemas ?? {}, true);
+    return generateBase(root, fileName, schemas ?? {}, true, true);
   }
 
   @override
@@ -40,7 +40,7 @@ class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
       }
     }
 
-    return generateBase(root, fileName, result, false);
+    return generateBase(root, fileName, result, false, false);
   }
 
   @override
@@ -69,7 +69,7 @@ class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
       }
     }
 
-    return generateBase(root, fileName, result, false);
+    return generateBase(root, fileName, result, false, false);
   }
 
   @override

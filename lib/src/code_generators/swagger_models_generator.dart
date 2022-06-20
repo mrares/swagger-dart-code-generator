@@ -175,14 +175,16 @@ abstract class SwaggerModelsGenerator extends SwaggerGeneratorBase {
 
         final neededResponse = responses['200'];
 
-        if (neededResponse != null &&
-            neededResponse.schema != null &&
-            neededResponse.schema!.type == kObject &&
-            neededResponse.schema!.properties.isNotEmpty) {
+        final schema =
+            neededResponse?.schema ?? neededResponse?.content?.schema;
+
+        if (schema != null &&
+            schema.type == kObject &&
+            schema.properties.isNotEmpty) {
           final pathText = key.split('/').map((e) => e.pascalCase).join();
           final requestText = operation.pascalCase;
 
-          results['$pathText$requestText\$Response'] = neededResponse.schema!;
+          results['$pathText$requestText\$Response'] = schema;
         }
       });
     });
@@ -191,10 +193,12 @@ abstract class SwaggerModelsGenerator extends SwaggerGeneratorBase {
   }
 
   String generateBase(
-      SwaggerRoot root,
-      String fileName,
-      Map<String, SwaggerSchema> classes,
-      bool generateFromJsonToJsonForRequests) {
+    SwaggerRoot root,
+    String fileName,
+    Map<String, SwaggerSchema> classes,
+    bool generateFromJsonToJsonForRequests,
+    bool generateResponsesModels,
+  ) {
     final allEnums = getAllEnums(root);
     final allEnumListNames = getAllListEnumNames(root);
 
@@ -203,8 +207,10 @@ abstract class SwaggerModelsGenerator extends SwaggerGeneratorBase {
             allEnums, options.enumsCaseSensitive)
         : '';
 
-    final classesFromResponses = getClassesFromResponses(root);
-    classes.addAll(classesFromResponses);
+    if (generateResponsesModels) {
+      final classesFromResponses = getClassesFromResponses(root);
+      classes.addAll(classesFromResponses);
+    }
 
     final classesFromInnerClasses = getClassesFromInnerClasses(classes);
 
@@ -1327,11 +1333,12 @@ $copyWithMethod
     return [];
   }
 
-  bool _hasOrInheritsDiscriminator(SwaggerSchema schema, Map<String, SwaggerSchema> schemas) {
-    if (schema.discriminator.isNotEmpty && schema.discriminator.containsKey('propertyName')) {
+  bool _hasOrInheritsDiscriminator(
+      SwaggerSchema schema, Map<String, SwaggerSchema> schemas) {
+    if (schema.discriminator.isNotEmpty &&
+        schema.discriminator.containsKey('propertyName')) {
       return true;
-    }
-    else if (schema.hasRef) {
+    } else if (schema.hasRef) {
       final parentName = schema.ref.split('/').last.pascalCase;
       final s = schemas[parentName];
       if (s != null) {

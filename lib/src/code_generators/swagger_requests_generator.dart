@@ -932,6 +932,7 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
   }
 
   String? _getReturnTypeFromContent({
+    required String method,
     required SwaggerResponse swaggerResponse,
     required String modelPostfix,
     required SwaggerRoot swaggerRoot,
@@ -1009,6 +1010,12 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
       }
     }
 
+    if (content.schema?.properties.isNotEmpty == true &&
+        content.schema?.type == kObject) {
+      final requestText = method.pascalCase;
+      return '$requestText\$Response';
+    }
+
     final contentSchemaType = content.schema?.type ?? '';
     if (contentSchemaType.isNotEmpty == true) {
       return kBasicTypesMap[contentSchemaType];
@@ -1057,6 +1064,7 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
           swaggerResponse: neededResponse,
           modelPostfix: modelPostfix,
           swaggerRoot: swaggerRoot,
+          method: methodName,
         ) ??
         '';
 
