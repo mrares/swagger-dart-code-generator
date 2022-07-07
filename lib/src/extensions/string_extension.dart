@@ -25,6 +25,8 @@ extension TypeExtension on String {
     return '$this?';
   }
 
+  String removeNullable() => replaceAll('?', '');
+
   String getRef() => split('/').last.pascalCase;
 
   String getUnformattedRef() => split('/').last;
@@ -37,6 +39,12 @@ extension TypeExtension on String {
       replaceAll('List<', '').replaceAll('Stream<', '').replaceAll('>', '');
 
   String asEnum() => 'enums.$this';
+
+  String asFuture() => 'Future<$this>';
+
+  String asDoubleGeneric() => '$this<T, V>';
+
+  String asGenerics() => '$this<T>';
 
   String asFutureResponse() => 'Future<chopper.Response<$this>>';
 

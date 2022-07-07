@@ -30,14 +30,19 @@ const kBasicSwaggerTypes = [
 ];
 
 const kMap = 'Map';
+const kType = 'Type';
+const kFinal = 'final';
 const kMapStringDynamic = 'Map<String,dynamic>';
 const kRequired = 'required';
 
+const kFreezed = 'freezed';
 const kChopperService = 'ChopperService';
 const kChopperApi = 'ChopperApi';
 const kResponse = 'Response';
 const kRequestBody = 'RequestBody';
 const kFutureResponse = 'Future<chopper.Response>';
+const kFutureGeneric = 'Future<T>';
+const kGeneric = 'T';
 const kString = 'string';
 const kInteger = 'integer';
 const kInt64 = 'int64';
