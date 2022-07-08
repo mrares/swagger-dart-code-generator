@@ -206,13 +206,15 @@ _service = SocketsService(socket: _defaultSocket, decoder : decoder);
 
     if (parameters.length > 1) {
       for (final param in parameters) {
-        data.putIfAbsent("'${param.name}'", () => param.name);
+        final parameter = param.name.split('\$').last;
+        data.putIfAbsent("'$parameter'", () => param.name);
       }
     } else if (parameters.length == 1) {
       for (final param in parameters) {
+        final parameter = param.name.split('\$').last;
         final String paramType = param.type?.symbol ?? '';
         if (kBasicTypes.contains(paramType.removeNullable())) {
-          data.putIfAbsent("'${param.name}'", () => param.name);
+          data.putIfAbsent("'$parameter'", () => param.name);
         } else {
           notBasicReturnType = paramType.split('.').last.removeNullable();
           notBasicParamName = param.name;
