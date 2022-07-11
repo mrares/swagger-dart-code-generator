@@ -1301,14 +1301,20 @@ $copyWithMethod
   }
 
   List<String> _getRequired(
-      SwaggerSchema schema, Map<String, SwaggerSchema> schemas) {
+      SwaggerSchema schema, Map<String, SwaggerSchema> schemas,
+      [int recursionCount = 5]) {
     final required = <String>{};
+    //TODO find the best solution for recursion generation models
+    if (recursionCount == 0) {
+      return required.toList();
+    }
     for (var interface in _getInterfaces(schema)) {
       if (interface.hasRef) {
         final parentName = interface.ref.split('/').last.pascalCase;
         final parentSchema = schemas[parentName];
-        required.addAll(
-            parentSchema != null ? _getRequired(parentSchema, schemas) : []);
+        required.addAll(parentSchema != null
+            ? _getRequired(parentSchema, schemas, recursionCount - 1)
+            : []);
       }
       required.addAll(interface.required);
     }
@@ -1327,11 +1333,12 @@ $copyWithMethod
     return [];
   }
 
-  bool _hasOrInheritsDiscriminator(SwaggerSchema schema, Map<String, SwaggerSchema> schemas) {
-    if (schema.discriminator.isNotEmpty && schema.discriminator.containsKey('propertyName')) {
+  bool _hasOrInheritsDiscriminator(
+      SwaggerSchema schema, Map<String, SwaggerSchema> schemas) {
+    if (schema.discriminator.isNotEmpty &&
+        schema.discriminator.containsKey('propertyName')) {
       return true;
-    }
-    else if (schema.hasRef) {
+    } else if (schema.hasRef) {
       final parentName = schema.ref.split('/').last.pascalCase;
       final s = schemas[parentName];
       if (s != null) {
