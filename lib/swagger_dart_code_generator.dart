@@ -188,10 +188,9 @@ class SwaggerDartCodeGenerator implements Builder {
 
     final fileNameWithExtension = getFileNameBase(buildStep.inputId.path);
     final fileNameWithoutExtension = removeFileExtension(fileNameWithExtension);
-    final outputFolder =
-        buildStep.inputId.path.contains(options.inputSocketsFolder)
-            ? options.outputSocketsFolder
-            : options.outputFolder;
+    final outputFolder = buildStep.inputId.path.contains(options.inputFolder)
+        ? options.outputFolder
+        : options.outputSocketsFolder;
 
     await _generateAndWriteFile(
       contents: parsed,
