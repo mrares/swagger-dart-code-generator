@@ -14,15 +14,19 @@ class SwaggerAdditionsGenerator extends SwaggerGeneratorBase {
   static const mappingVariableName = 'generatedMapping';
 
   ///Generates index.dart for all generated services
-  String generateIndexes(List<String> fileNames) {
+  String generateIndexes(List<String> fileNames, bool isSocketsIndexes) {
     final importsList = fileNames.map((key) {
       final actualFileName = getFileNameBase(key);
+      final fileExtension = isSocketsIndexes ? '.sockets.swagger' : '.swagger';
       final fileName = actualFileName
           .replaceAll('-', '_')
-          .replaceAll('.json', '.swagger')
-          .replaceAll('.yaml', '.swagger');
-      final className = getClassNameFromFileName(actualFileName);
+          .replaceAll('.json', fileExtension)
+          .replaceAll('.yaml', fileExtension);
 
+      if (isSocketsIndexes) {
+        return 'export \'$fileName.dart\';';
+      }
+      final className = getClassNameFromFileName(actualFileName);
       return 'export \'$fileName.dart\' show $className;';
     }).toList();
 

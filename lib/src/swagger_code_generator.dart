@@ -32,8 +32,10 @@ class SwaggerCodeGenerator {
     return openApi != null ? 3 : 2;
   }
 
-  String generateIndexes(List<String> fileNames, GeneratorOptions options) =>
-      _getSwaggerAdditionsGenerator(options).generateIndexes(fileNames);
+  String generateIndexes(List<String> fileNames, GeneratorOptions options,
+          bool isSocketsIndexed) =>
+      _getSwaggerAdditionsGenerator(options)
+          .generateIndexes(fileNames, isSocketsIndexed);
 
   String generateConverterMappings(bool hasModels, GeneratorOptions options) =>
       _getSwaggerAdditionsGenerator(options)

@@ -158,8 +158,33 @@ _service = SocketsService(socket: _defaultSocket, decoder : decoder);
           ..body = Code(methodCode)
           ..returns = Reference(returns));
 
+        final listener = Method(
+          (m) => m
+            ..returns = Reference('SocketsServiceSubscription')
+            ..name = 'listen${tempMethodName.capitalize.asGenerics()}'
+            ..requiredParameters.addAll([
+              Parameter(
+                (p) => p
+                  ..name = 'listener'
+                  ..type = Reference('ValueChange<T>'),
+              ),
+              Parameter(
+                (p) => p
+                  ..name = 'builder'
+                  ..type = Reference('T Function(Function, dynamic)?'),
+              ),
+            ])
+            ..body = Code('''
+return _service.subscribe<T>(
+    '${swaggerRoot.basePath}$path',
+    listener,
+    builder,
+);            
+            '''),
+        );
+
         final socketMethod = _getSocketMethod(method);
-        methods.addAll([socketMethod]);
+        methods.addAll([socketMethod, listener]);
       });
     });
 

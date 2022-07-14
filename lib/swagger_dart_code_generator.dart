@@ -241,6 +241,8 @@ class SwaggerDartCodeGenerator implements Builder {
     required BuildStep buildStep,
     required String outputFolder,
   }) async {
+    final isSocketsFile = outputFolder == options.outputSocketsFolder;
+
     final codeGenerator = SwaggerCodeGenerator();
 
     final models = codeGenerator.generateModels(
@@ -258,7 +260,7 @@ class SwaggerDartCodeGenerator implements Builder {
     final imports = codeGenerator.generateImportsContent(
       fileNameWithoutExtension,
       models.isNotEmpty,
-      options.buildOnlyModels,
+      isSocketsFile ? true : options.buildOnlyModels,
       enums.isNotEmpty,
       options.separateModels,
       options,
@@ -283,11 +285,11 @@ class SwaggerDartCodeGenerator implements Builder {
           copyAssetId,
           _generateFileContent(
               imports,
-              requests,
+              isSocketsFile ? '' : requests,
               options.separateModels ? '' : models,
               options.separateModels ? '' : responses,
               options.separateModels ? '' : requestBodies,
-              customDecoder,
+              isSocketsFile ? '' : customDecoder,
               options.separateModels ? '' : dateToJson));
     }
 
@@ -395,11 +397,13 @@ $dateToJson
   Future<void> _generateAdditionalFiles(AssetId inputId, BuildStep buildStep,
       bool hasModels, List<String> allFiles, String outputFolder) async {
     final codeGenerator = SwaggerCodeGenerator();
+    final isSocketsFile = outputFolder == options.outputSocketsFolder;
 
     final indexAssetId =
         AssetId(inputId.package, join(outputFolder, _indexFileName));
 
-    final imports = codeGenerator.generateIndexes(allFiles, options);
+    final imports =
+        codeGenerator.generateIndexes(allFiles, options, isSocketsFile);
 
     if (!options.buildOnlyModels) {
       await buildStep.writeAsString(indexAssetId, _formatter.format(imports));

@@ -21,6 +21,8 @@ class SwaggerSocketsServiceGenerator extends SwaggerGeneratorBase {
 
     final socketsParser = _getSocketServiceParser();
 
+    final serviceSubscription = _getServiceSubscription();
+
     final customDecoder = _getCustomJsonDecoder();
 
     final serviceMessage = _generateServiceMessage();
@@ -29,6 +31,8 @@ class SwaggerSocketsServiceGenerator extends SwaggerGeneratorBase {
 $fileImports
 
 ${socketsServiceClass.accept(DartEmitter()).toString()}
+
+${serviceSubscription.accept(DartEmitter()).toString()}
 
 $customDecoder
 
@@ -46,7 +50,13 @@ ${serviceMessage.accept(DartEmitter()).toString()}
 
     return Class((c) => c
       ..name = className
-      ..docs.add(kServiceHeader)
+      ..docs.add('''
+$kServiceHeader
+
+typedef BuilderFunction<T> = T Function(Function, dynamic);
+typedef ValueChange<T> = void Function(T value);
+
+''')
       ..constructors.add(Constructor((c) => c
         ..factory = true
         ..body = Code(factoryConstructorBody)
@@ -85,6 +95,13 @@ ${serviceMessage.accept(DartEmitter()).toString()}
           ..type = Reference('WebSocketChannel')
           ..name = '_socket'
           ..modifier = FieldModifier.final$,
+      ))
+      ..fields.add(Field(
+        (f) => f
+          ..type = Reference('Map<String, List<void Function(Object)>>')
+          ..name = '_listeners'
+          ..modifier = FieldModifier.final$
+          ..assignment = Code('{}'),
       ))
       ..fields.add(Field(
         (f) => f
@@ -249,6 +266,39 @@ ${serviceMessage.accept(DartEmitter()).toString()}
     );
   }
 
+  Class _getServiceSubscription() {
+    return Class(
+      (c) => c
+        ..name = 'SocketsServiceSubscription'
+        ..fields.add(Field(
+          (f) => f
+            ..name = '_onCancel'
+            ..modifier = FieldModifier.final$
+            ..type = Reference(
+              'Function()',
+            ),
+        ))
+        ..constructors.add(Constructor(
+          (c) => c
+            ..requiredParameters.add(
+              Parameter(
+                (p) => p
+                  ..name = '_onCancel'
+                  ..toThis = true,
+              ),
+            ),
+        ))
+        ..methods.addAll([
+          Method(
+            (m) => m
+              ..name = 'cancel'
+              ..returns = Reference('void')
+              ..body = Code('_onCancel();'),
+          ),
+        ]),
+    );
+  }
+
   List<Method> _getServiceMethods() {
     final serviceMethods = <Method>[];
     serviceMethods
@@ -353,9 +403,90 @@ ${serviceMessage.accept(DartEmitter()).toString()}
               ..type = Reference('SocketsServiceMessage'),
           ))
           ..body = Code(_getCompleteRequestBody()),
+      ))
+      ..add(Method(
+        (m) => m
+          ..name = 'subscribe'.asGenerics()
+          ..returns = Reference('SocketsServiceSubscription')
+          ..docs.add('\n')
+          ..requiredParameters.add(Parameter(
+            (p) => p
+              ..name = 'type'
+              ..type = Reference('String'),
+          ))
+          ..requiredParameters.add(Parameter(
+            (p) => p
+              ..name = 'listener'
+              ..type = Reference('ValueChange'.asGenerics()),
+          ))
+          ..optionalParameters.add(Parameter(
+            (p) => p
+              ..name = 'builder'
+              ..type = Reference('BuilderFunction<T>?'),
+          ))
+          ..body = Code(_getSubscribeMethodCode()),
+      ))
+      ..add(Method(
+        (m) => m
+          ..name = '_addEventListener'
+          ..returns = Reference('void')
+          ..docs.add('\n')
+          ..requiredParameters.add(Parameter(
+            (p) => p
+              ..name = 'type'
+              ..type = Reference('String'),
+          ))
+          ..body = Code('''
+_socket.sink.add('events/startListen:\$type');          
+          '''),
+      ))
+      ..add(Method(
+        (m) => m
+          ..name = '_removeEventListener'
+          ..returns = Reference('void')
+          ..docs.add('\n')
+          ..requiredParameters.add(Parameter(
+            (p) => p
+              ..name = 'type'
+              ..type = Reference('String'),
+          ))
+          ..body = Code('''
+_socket.sink.add('events/stopListen:\$type');          
+          '''),
       ));
     // ..add(Method((m) => m));
     return serviceMethods;
+  }
+
+  String _getSubscribeMethodCode() {
+    return '''
+final decodedListener = builder == null
+        // ignore: inference_failure_on_untyped_parameter
+        ? (data) => listener(_decodeValue<T>(data))
+        // ignore: inference_failure_on_untyped_parameter
+        : (data) => listener(builder(_decodeValue, data));
+
+    final subscription = SocketsServiceSubscription(() {
+      final listenerList = _listeners[type] ?? [];
+
+      if (listenerList.length == 1) {
+        _listeners.remove(type);
+        _removeEventListener(type);
+        return;
+      }
+
+      listenerList.remove(decodedListener);
+    });
+
+    if (!_listeners.containsKey(type)) {
+      _listeners[type] = [decodedListener];
+      _addEventListener(type);
+      return subscription;
+    }
+
+    _listeners[type]?.add(decodedListener);
+    return subscription;
+''';
   }
 
   String _getFactoryConstructorBody(String className) {

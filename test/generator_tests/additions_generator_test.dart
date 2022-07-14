@@ -31,7 +31,7 @@ void main() {
       final result = generator.generateIndexes(<String>[
         'someFile.dart',
         'secondFile',
-      ]);
+      ], false);
 
       expect(result, contains("export 'someFile.dart.dart' show SomeFile;"));
       expect(result, contains("export 'secondFile.dart' show SecondFile;"));
