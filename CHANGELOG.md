@@ -1,3 +1,7 @@
+# 2.7.4
+
+* Fixed generation of responses which are `oneOf`
+
 # 2.7.3
 
 * Fixed issue with generation `+` and `-` signs as enum names ([#444](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/issues/444))
