@@ -8,7 +8,6 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/epam-cross-platform-lab/swagger-dart-code-generator?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/epam-cross-platform-lab/swagger-dart-code-generator?style=flat-square)
 <a href="https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/actions"><img src="https://img.shields.io/github/workflow/status/epam-cross-platform-lab/swagger-dart-code-generator/CI%20for%20master%20branch/master" alt="build"></a>
-<a href="https://discord.gg/Z6btby6b"><img src="https://img.shields.io/discord/755005482405462017.svg?logo=discord&color=blue" alt="Discord"></a>
 [![codecov](https://codecov.io/gh/epam-cross-platform-lab/swagger-dart-code-generator/branch/master/graph/badge.svg)](https://codecov.io/gh/epam-cross-platform-lab/swagger-dart-code-generator)
 <a href="https://github.com/epam-cross-platform-lab/swagger-dart-code-generator"><img src="https://img.shields.io/github/stars/epam-cross-platform-lab/swagger-dart-code-generator?style=social" alt="Discord"></a>
 
@@ -93,6 +92,7 @@ targets:
 | `response_override_value_map` | `[]` | `false` | Contains map of responses and theirs overridden values. See [ResponseOverrideValueMap](#response-override-value-map-for-requests-generation). |
 | `cut_from_model_names` | `-` | `false` | If your model names are long and contain a lot of duplicated words, for example `DbUsersModelsV3GeneralUserModel`, you can cut off duplicated part, using `cut_from_model_names : DbUsersModelsV3`. Also, you can use regex expressions in this parameter. |
 | `nullable_models` | `-` | `false` | List of model names should have force-nullable properties. Example of usage in [build.yaml](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/blob/master/example/build.yaml) |
+| `override_equals_and_hashcode` | `-` | `true` | If need to decrease app size - you can disable generation of `hashcode` and `Equals` method |
 
 
 It's important to remember that, by default, [build](https://github.com/dart-lang/build) will follow [Dart's package layout conventions](https://dart.dev/tools/pub/package-layout), meaning that only some folders will be considered to parse the input files. So, if you want to reference files from a folder other than `lib/`, make sure you've included it on `sources`:

@@ -1,3 +1,29 @@
+# 2.7.6
+
+* Fixed copyWith method generation ([#438](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/issues/438))
+* Fixed generation of names with dots and other bad things ([#449](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/issues/449))
+
+# 2.7.5
+
+* Added new build options flag `override_equals_and_hashcode` to disable generation of hashCode and equals if need to decrease codebase
+
+# 2.7.3
+
+* Fixed issue with generation `+` and `-` signs as enum names ([#444](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/issues/444))
+
+# 2.7.2
+
+* Implemented generation of copyWithWrapped ([#438](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/issues/438))
+
+# 2.7.1
+
+* Fixed generation of putIfAbsent for responses ([#436](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/issues/436))
+
+# 2.7.0
+
+* Fixed and optimizations
+* Improved multipart support ([#440](https://github.com/epam-cross-platform-lab/swagger-dart-code-generator/issues/440))
+
 # 2.6.0
 
 * ***Breaking*** Removed  `use_default_null_for_lists` option

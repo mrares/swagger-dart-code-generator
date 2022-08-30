@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_generator_base.dart';
+import 'package:swagger_dart_code_generator/src/code_generators/swagger_models_generator.dart';
 import 'package:swagger_dart_code_generator/src/models/generator_options.dart';
 import 'package:swagger_dart_code_generator/src/extensions/string_extension.dart';
 import 'package:swagger_dart_code_generator/src/swagger_models/requests/swagger_request.dart';
@@ -286,6 +287,8 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
           results.add(getValidatedClassName(neededResponse));
         }
       }
+    } else if (successResponse?.schema?.properties.isNotEmpty == true) {
+      results.add(response);
     }
 
     return results.where((element) => _isValidModelName(element)).toList();
@@ -567,6 +570,11 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
     if (name == kInteger && format == kInt64) {
       return kNum;
     }
+
+    if (name == kArray) {
+      return 'List?';
+    }
+
     return kBasicTypesMap[name] ?? name.pascalCase + modelPostfix;
   }
 
@@ -639,14 +647,15 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
         final schema = requestBody.content?.schema;
         schema?.properties.forEach((key, value) {
           if (value.type == 'string' && value.format == 'binary') {
+            final isRequired = schema.required.contains(key);
             result.add(
               Parameter(
                 (p) => p
                   ..name = key
                   ..named = true
-                  ..required = schema.required.contains(key)
+                  ..required = isRequired
                   ..type = Reference(
-                    'List<int>',
+                    isRequired ? 'List<int>' : 'List<int>?',
                   )
                   ..named = true
                   ..annotations.add(
@@ -658,11 +667,13 @@ class SwaggerRequestsGenerator extends SwaggerGeneratorBase {
             result.add(
               Parameter(
                 (p) => p
-                  ..name = key
+                  ..name = SwaggerModelsGenerator.getValidatedParameterName(key)
                   ..named = true
                   ..required = schema.required.contains(key)
                   ..type = Reference(
-                      _mapParameterName(value.type, value.format, modelPostfix))
+                    _mapParameterName(value.type, value.format, modelPostfix)
+                        .makeNullable(),
+                  )
                   ..named = true
                   ..annotations.add(
                     refer(kPart.pascalCase).call([]),

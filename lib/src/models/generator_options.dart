@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'generator_options.g2.dart';
+part 'generator_options.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, anyMap: true)
 class GeneratorOptions {
@@ -30,6 +30,7 @@ class GeneratorOptions {
     this.additionalHeaders = const [],
     this.inputSocketsFolder = '',
     this.outputSocketsFolder = '',
+    this.overrideEqualsAndHashcode = true,
   });
 
   /// Build options from a JSON map.
@@ -41,6 +42,9 @@ class GeneratorOptions {
 
   @JsonKey(defaultValue: true)
   final bool withBaseUrl;
+
+  @JsonKey(defaultValue: true)
+  final bool overrideEqualsAndHashcode;
 
   @JsonKey(defaultValue: true)
   final bool withConverter;

@@ -339,7 +339,7 @@ void main() {
     test('Should return model class content', () {
       final map = SwaggerSchema.fromJson({});
       const className = 'Animals';
-      const classExpectedResult = 'class Animals {';
+      const classExpectedResult = 'class Animals{';
       const factoryConstructorExpectedResult =
           '\tfactory Animals.fromJson(Map<String, dynamic> json) => _\$AnimalsFromJson(json);\n';
       final result = generator.generateModelClassContent(
@@ -361,7 +361,7 @@ void main() {
     test('Should return model class content', () {
       final map = SwaggerSchema.fromJson({});
       const className = 'Animals';
-      const classExpectedResult = 'class Animals {';
+      const classExpectedResult = 'class Animals{';
       const factoryConstructorExpectedResult =
           '\tfactory Animals.fromJson(Map<String, dynamic> json) => _\$AnimalsFromJson(json);\n';
       final result = generator2.generateModelClassContent(
@@ -542,7 +542,7 @@ void main() {
       };
 
       const className = 'Animals';
-      const jsonKeyExpectedResult = "\t@JsonKey(name: '\$with')\n";
+      const jsonKeyExpectedResult = "\t@JsonKey(name: '\\\$with')\n";
       const fieldExpectedResult = 'final Pet? \$with';
       final result = generator.generatePropertiesContent(
         SwaggerRoot.empty,

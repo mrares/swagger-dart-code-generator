@@ -66,12 +66,15 @@ GeneratorOptions _$GeneratorOptionsFromJson(Map json) => GeneratorOptions(
           [],
       inputSocketsFolder: json['input_sockets_folder'] as String? ?? '',
       outputSocketsFolder: json['output_sockets_folder'] as String? ?? '',
+      overrideEqualsAndHashcode:
+          json['override_equals_and_hashcode'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$GeneratorOptionsToJson(GeneratorOptions instance) =>
     <String, dynamic>{
       'use_path_for_request_names': instance.usePathForRequestNames,
       'with_base_url': instance.withBaseUrl,
+      'override_equals_and_hashcode': instance.overrideEqualsAndHashcode,
       'with_converter': instance.withConverter,
       'additional_headers': instance.additionalHeaders,
       'input_urls': instance.inputUrls,
