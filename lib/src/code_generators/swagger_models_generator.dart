@@ -1292,7 +1292,7 @@ List<enums.$neededName> ${neededName.camelCase}ListFromJson(
 
     final toStringOverride = '''
 @override
-String toString() => throw Exception('azazazazazazaz - $validatedClassName to string called');
+String toString() => throw Exception('azazazazazazaz - ${validatedClassName.replaceAll('\$', '\\\$')} to string called');
 ''';
 
     final fromJson = generatedFromJson(schema, validatedClassName);
